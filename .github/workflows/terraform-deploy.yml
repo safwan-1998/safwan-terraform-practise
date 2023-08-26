@@ -76,3 +76,6 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false tf.plan
+
+    - name: Terraform Done
+      run: echo "Terraform applied successfully"
