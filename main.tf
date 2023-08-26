@@ -2,7 +2,6 @@ terraform {
   backend "s3" {
     dynamodb_table = "peak-terraform"
     encrypt        = true
-    region = var.region
   }
   required_providers {
     aws = {
