@@ -32,6 +32,23 @@ on:
         options:
           - eu-west-1
           - ap-south-1
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+      stage:
+        type: string
+        description: Target stage to test against (used by deploy-platform only)
+        required: true
+      account:
+        type: string
+        description: Choose any of the known account for stage latest/test 122403041129, beta/prod 794236216820, parvati 331043233042
+        required: true
+      region:
+        type: string
+        description: Choose ap-south-1 for parvati, rest are eu-west-1 region
+        required: true
 
 jobs:
   terraform:
