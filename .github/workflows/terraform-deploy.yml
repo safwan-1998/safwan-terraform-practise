@@ -30,6 +30,7 @@ on:
         description: Choose ap-south-1 for parvati, rest are eu-west-1 region
         required: true
         options:
+          - us-east-1
           - eu-west-1
           - ap-south-1
 
