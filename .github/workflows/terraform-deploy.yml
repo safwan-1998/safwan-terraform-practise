@@ -1,11 +1,16 @@
 name: Terraform Deployment
 
 on:
-  push:
-    branches:
-      - main  # Or whichever branch you want to trigger the workflow on
   workflow_dispatch:
     inputs:
+      working-directory:
+        required: true
+        type: choice
+        description: terraform workflow directory
+        options:
+          - "network/shared"
+          - "network/spoke"
+          - "platform/spoke"
       stage:
         type: choice
         description: Target stage to test against (used by deploy-platform only)
@@ -30,8 +35,11 @@ on:
 
 jobs:
   terraform:
-    name: "[${{ inputs.stage }}] Deploy"
-    runs-on: ubuntu-latest 
+    name: "[${{ inputs.stage }}] [${{ inputs.working-directory }}] Deploy"
+    runs-on: deploy-platform
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     permissions:
       issues: write
       contents: read
