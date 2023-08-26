@@ -51,7 +51,7 @@ jobs:
         role-session-name: TerraformSession
 
     - name: Terraform init
-      run: terraform init -backend-config=backend/${{ inputs.stage }}-${{ inputs.ACCOUNT }}.${{ inputs.REGION }}.hcl -upgrade
+      run: terraform init -backend-config=backend/${{ inputs.stage }}.hcl -upgrade
 
     - name: Terraform Validate
       id: validate
