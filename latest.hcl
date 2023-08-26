@@ -1,2 +1,2 @@
-bucket = "peak-terraform-dev"
-key    = "safwan/latest/deploy.tfstate"
+bucket = "safwan-terraform"
+key    = "deploy.tfstate"
