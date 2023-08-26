@@ -30,7 +30,11 @@ on:
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest  # You can choose a different runner if needed
+    name: "[${{ inputs.stage }}] Deploy"
+    runs-on: ubuntu-latest 
+    permissions:
+      issues: write
+      contents: read
 
     steps:
     - name: Checkout code
