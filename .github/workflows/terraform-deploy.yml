@@ -1,0 +1,71 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - main  # Or whichever branch you want to trigger the workflow on
+  workflow_dispatch:
+    inputs:
+      stage:
+        type: choice
+        description: Target stage to test against (used by deploy-platform only)
+        required: true
+        options:
+          - "latest"
+          - "test"
+          - "beta"
+          - "prod"
+          - "parvati"
+      account:
+        type: string
+        description: Choose any of the known account for stage latest/test 122403041129, beta/prod 794236216820, parvati 331043233042
+        required: true
+      region:
+        type: choice
+        description: Choose ap-south-1 for parvati, rest are eu-west-1 region
+        required: true
+        options:
+          - eu-west-1
+          - ap-south-1
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest  # You can choose a different runner if needed
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.0  # Specify the version you're using
+
+    - name: Assume terraform deployment role
+      continue-on-error: true
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::${{ inputs.ACCOUNT }}:role/github-terraform-pipeline-role
+        role-duration-seconds: 3600
+        aws-region: ${{ inputs.REGION }}
+        role-session-name: TerraformSession
+
+    - name: Terraform init
+      run: terraform init -backend-config=backend/${{ inputs.stage }}-${{ inputs.ACCOUNT }}.${{ inputs.REGION }}.hcl -upgrade
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+
+    - name: Terraform workspace
+      id: workspace
+      run: terraform workspace select ${{ inputs.stage }}| terraform workspace new ${{ inputs.stage }}
+
+    - name: Terraform plan
+      run: terraform plan -input=false -out=tf.plan
+      env:
+        TF_VAR_region: ${{ inputs.REGION }}
+        TF_VAR_service_name: "safwan-terraform"
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false tf.plan
