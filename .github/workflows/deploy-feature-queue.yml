@@ -36,19 +36,19 @@ on:
           
 jobs:
     build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2  # Include the checkout step
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2  # Include the checkout step
 
     deploy-matrix:
-        strategy:
-            matrix:
-                features: [uploads, outputs, downloads]
-        uses: safwan-1998/safwan-terraform-practise/github/workflows/terraform-deploy.yml@main
-        with:
-            working-directory: ${{ inputs.working-directory }}
-            stage: ${{ inputs.stage }}
-            account: ${{ inputs.account }}
-            region: ${{ inputs.region }}
-            feature: ${{ matrix.features }}
+      strategy:
+        matrix:
+          features: [uploads, outputs, downloads]
+      uses: safwan-1998/safwan-terraform-practise/github/workflows/terraform-deploy.yml@main
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        stage: ${{ inputs.stage }}
+        account: ${{ inputs.account }}
+        region: ${{ inputs.region }}
+        feature: ${{ matrix.features }}
