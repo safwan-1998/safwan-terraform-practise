@@ -35,7 +35,72 @@ on:
             - ap-south-1
           
 jobs:
-    deploy-matrix:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Get current commit ID
+        run: echo "CURRENT_COMMIT_ID=`git rev-parse ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref }}`" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1.5.8
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ inputs.REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get node modules cache
+        uses: actions/cache@v2
+        id: cache-node-modules
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-lts-install_dependencies-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-lts-install_dependencies-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1.6.0
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-single-buildx
+
+      - name: Build Docker image
+        id: build-image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          file: Dockerfile
+          context: .
+          tags: 088564592310.dkr.ecr.eu-west-1.amazonaws.com/${{ github.event.repository.name }}:${{ github.sha }}
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+  deploy-matrix:
+      needs: build
       strategy:
         matrix:
           features: [uploads, outputs, downloads]

@@ -1,0 +1,8 @@
+{
+  "name": "safwan-terraform-practise",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:safwan-1998/safwan-terraform-practise.git",
+  "author": "<safwan.mansuri@peak.ai>",
+  "license": "MIT"
+}
