@@ -35,22 +35,18 @@ on:
             - ap-south-1
           
 jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2  # Include the checkout step
+
     deploy-matrix:
-      strategy:
-        matrix:
-          features: [uploads, outputs, downloads]
-      runs-on: ubuntu-latest
-
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2  # Include the checkout step
-        
-        - name: running
-          run: echo "running job with ${{ matrix.features }}"
-
-        - name: Deploy feature step
-          uses: ./github/workflows/terraform-deploy.yml@main
-          with:
+        strategy:
+            matrix:
+                features: [uploads, outputs, downloads]
+        uses: ./github/workflows/terraform-deploy.yml
+        with:
             working-directory: ${{ inputs.working-directory }}
             stage: ${{ inputs.stage }}
             account: ${{ inputs.account }}
