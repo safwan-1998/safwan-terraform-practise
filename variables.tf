@@ -5,3 +5,7 @@ variable "region" {
 variable "service_name" {
   default = "safwan-terraform"
 }
+
+variable "ecr_image" {
+  default = "safwan-terraform"
+}
