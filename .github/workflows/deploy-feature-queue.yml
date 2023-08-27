@@ -42,7 +42,10 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-        - name: Include deploy steps
+        - name: Checkout code
+          uses: actions/checkout@v2  # Include the checkout step
+
+        - name: Deploy feature step
           uses: ./.github/workflows/terraform-deploy.yml
           with:
             working-directory: ${{ inputs.working-directory }}
