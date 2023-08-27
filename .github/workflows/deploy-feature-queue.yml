@@ -94,7 +94,7 @@ jobs:
           push: true
           file: Dockerfile
           context: .
-          tags: 088564592310.dkr.ecr.eu-west-1.amazonaws.com/${{ github.event.repository.name }}:${{ github.sha }}
+          tags: 821484330928.dkr.ecr.us-east-1.amazonaws.com/${{ github.event.repository.name }}:${{ github.sha }}
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
