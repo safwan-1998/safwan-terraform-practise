@@ -49,3 +49,6 @@ jobs:
         account: ${{ inputs.account }}
         region: ${{ inputs.region }}
         feature: ${{ matrix.features }}
+      secrets:
+        AWS_ACCESS_KEY_ID_DEV: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+        AWS_SECRET_ACCESS_KEY_DEV: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
