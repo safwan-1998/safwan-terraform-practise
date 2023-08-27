@@ -42,12 +42,6 @@ resource "aws_sqs_queue" "service_queues" {
   name = "safwan-queue-${local.stage}"
 }
 
-resource "null_resource" "example" {
-  provisioner "local-exec" {
-    command = "${ecr_image}"
-  }
-}
-
 locals {
     stage        = terraform.workspace
     service_name = var.service_name
