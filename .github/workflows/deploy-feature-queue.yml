@@ -45,7 +45,7 @@ jobs:
         strategy:
             matrix:
                 features: [uploads, outputs, downloads]
-        uses: ./github/workflows/terraform-deploy.yml@main
+        uses: safwan-1998/safwan-terraform-practise/github/workflows/terraform-deploy.yml@main
         with:
             working-directory: ${{ inputs.working-directory }}
             stage: ${{ inputs.stage }}
