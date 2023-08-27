@@ -33,6 +33,36 @@ on:
           - us-east-1
           - eu-west-1
           - ap-south-1
+      feature:
+          type: choice
+          description: Choose the feature to deploy
+          required: true
+          options:
+            - uploads
+            - outouts
+            - downloads
+
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+      stage:
+        type: string
+        description: Target stage to test against (used by deploy-platform only)
+        required: true
+      account:
+        type: string
+        description: Choose any of the known account for stage latest/test 122403041129, beta/prod 794236216820, parvati 331043233042
+        required: true
+      region:
+        type: string
+        description: Choose ap-south-1 for parvati, rest are eu-west-1 region
+        required: true
+      feature:
+        type: string
+        description: Choose the feature to deploy
+        required: true
 
 jobs:
   terraform:
@@ -75,7 +105,6 @@ jobs:
         TF_VAR_service_name: "safwan-terraform"
 
     - name: Self approval
-      if: contains(fromJson('["latest", "test"]'), inputs.stage )
       uses: trstringer/manual-approval@v1.8.0 #Limitation unable to modify Issue Body
       timeout-minutes: 30
       with:
@@ -83,10 +112,10 @@ jobs:
         approvers: ${{ github.actor }}
         minimum-approvals: 1
         exclude-workflow-initiator-as-approver: false
-        issue-title: Deploying for stage ${{ inputs.stage }}
+        issue-title: Deploying ${{ inputs.feature }} feature for stage ${{ inputs.stage }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false tf.plan
 
     - name: Terraform Done
-      run: echo "Terraform applied successfully"
+      run: echo "Terraform applied successfully for feature ${{ inputs.feature }} for stage ${{ inputs.stage }}"
