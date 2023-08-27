@@ -44,14 +44,15 @@ jobs:
       steps:
         - name: Checkout code
           uses: actions/checkout@v2  # Include the checkout step
+        
         - name: running
           run: echo "running job with ${{ matrix.features }}"
 
-        # - name: Deploy feature step
-        #   uses: ./.github/workflows/terraform-deploy.yml
-        #   with:
-        #     working-directory: ${{ inputs.working-directory }}
-        #     stage: ${{ inputs.stage }}
-        #     account: ${{ inputs.account }}
-        #     region: ${{ inputs.region }}
-        #     feature: ${{ matrix.features }}
+        - name: Deploy feature step
+          uses: terraform-deploy.yml
+          with:
+            working-directory: ${{ inputs.working-directory }}
+            stage: ${{ inputs.stage }}
+            account: ${{ inputs.account }}
+            region: ${{ inputs.region }}
+            feature: ${{ matrix.features }}
