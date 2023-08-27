@@ -39,6 +39,7 @@ jobs:
       strategy:
         matrix:
           features: [uploads, outputs, downloads]
+        max-parallel: 1 
       permissions:
         issues: write
         contents: read
