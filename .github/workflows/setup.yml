@@ -1,0 +1,24 @@
+name: Setup
+on:
+  workflow_dispatch:
+
+jobs:
+  create_ecr_repo:
+    runs-on: ubuntu-latest
+    env:
+      REGION: us-east-1
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1.5.8
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ env.REGION }}
+
+      - name: Provision ECR repo
+        run: |
+          aws servicecatalog provision-product \
+          --provisioned-product-name ${{ github.event.repository.name }}-ecr-repo \
+          --provisioning-artifact-name Default \
+          --provisioning-parameters '[{"Key": "RepositoryName", "Value": "${{ github.event.repository.name }}"}, {"Key": "CrossAccountAccess", "Value": "enabled"}]' \
+          --product-name ECR-Repo \
